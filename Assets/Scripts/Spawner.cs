@@ -1,11 +1,9 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private Spawnpoint[] _spawnpoints;
-    [SerializeField] private Transform[] _endPoints;
+    [SerializeField] private Enemy _prefab;
 
     private float _delay = 2f;
     private WaitForSeconds _timeToSpawn;
@@ -14,7 +12,6 @@ public class Spawner : MonoBehaviour
     private void Awake()
     {
         _timeToSpawn = new WaitForSeconds(_delay);
-        _spawnpoints = GetComponentsInChildren<Spawnpoint>();
     }
 
     private void Start()
@@ -24,8 +21,7 @@ public class Spawner : MonoBehaviour
 
     private void CreateEnemy()
     {
-        Spawnpoint spawnpoint = _spawnpoints[Random.Range(0, _spawnpoints.Length)];
-        Enemy enemy = Instantiate(spawnpoint.GetPrefab(), spawnpoint.transform.position, Quaternion.identity);
+        Instantiate(_prefab,transform.position, Quaternion.identity);
     }
 
     private IEnumerator Spawn()

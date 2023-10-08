@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Oscillator : MonoBehaviour
 {
-    [SerializeField] private Vector2 _movementVector;
+    [SerializeField] private Vector2 _moveDirection;
     [SerializeField] private float _period = 2f;
 
     private Vector2 _startingPosition;
@@ -19,7 +19,7 @@ public class Oscillator : MonoBehaviour
 
         float pingPong = Mathf.PingPong(Time.time / _period, 1f);
 
-        Vector2 offset = _movementVector * pingPong;
+        Vector2 offset = _moveDirection * pingPong;
         transform.position = _startingPosition + offset;
     }
 }
