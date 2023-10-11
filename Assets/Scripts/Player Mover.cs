@@ -1,52 +1,53 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerMover : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D _rigidbody2D;
-    [SerializeField] private PlayerAnimator _playerAnimator;
+    [SerializeField] private UnityEvent _jumpStarted;
     [SerializeField] private float _moveSpeed = 10f;
     [SerializeField] private float _jumpForce = 5f;
 
     public bool IsJumping { get; private set; }
     public bool IsOnGround { get; private set; }
+    public float Velocity => _rigidbody2D.velocity.x;
 
     private void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
-        _playerAnimator = GetComponent<PlayerAnimator>(); // onvalidate
     }
 
     private void Update()
     {
         Jump();
-    }
-
-    private void FixedUpdate()
-    {
         Move();
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        IsOnGround = true;
-        IsJumping = false;
+        if (collision.gameObject.tag == "Ground")
+        { 
+            IsOnGround = true;
+            IsJumping = false;
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        IsOnGround = false;
+        if (collision.gameObject.tag == "Ground")
+            IsOnGround = false;
     }
 
     private void Move()
     {
-        if(_rigidbody2D.velocity.x == 0 && IsOnGround == false) { _playerAnimator.Idle(); }
+        float horizontalInput = Input.GetAxisRaw("Horizontal");
 
-        float xValue = Input.GetAxis("Horizontal");
-
-        if(xValue != 0)
-            _playerAnimator.Run();
-
-        _rigidbody2D.velocity = new Vector2(xValue * _moveSpeed * Time.deltaTime, _rigidbody2D.velocity.y);
+        if(horizontalInput != 0)
+        {
+            transform.localScale = new Vector3(horizontalInput, transform.localScale.y, transform.localScale.z);
+        }
+        
+        _rigidbody2D.velocity = new Vector2(horizontalInput * _moveSpeed, _rigidbody2D.velocity.y);
     }
 
     private void Jump()
@@ -56,7 +57,7 @@ public class PlayerMover : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             _rigidbody2D.AddForce(new Vector2(0f, _jumpForce), ForceMode2D.Impulse);
-            _playerAnimator.Jump();
+            _jumpStarted?.Invoke();
 
             IsJumping = true;
         }
