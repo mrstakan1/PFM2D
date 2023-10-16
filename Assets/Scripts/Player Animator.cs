@@ -10,18 +10,12 @@ public class PlayerAnimator : MonoBehaviour
     [SerializeField] private Animator _animator;
     [SerializeField] private PlayerMover _player;
 
+    private bool _isRunning = false;
+
     private void OnValidate()
     {
         if (_animator == null)
             _animator = GetComponent<Animator>();
-    }
-
-    private void Update()
-    {
-        if (_player.Velocity == 0)
-            Idle();
-        else
-            Run();
     }
 
     public void Idle()

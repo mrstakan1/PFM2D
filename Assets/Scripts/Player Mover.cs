@@ -5,6 +5,8 @@ public class PlayerMover : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D _rigidbody2D;
     [SerializeField] private UnityEvent _jumpStarted;
+    [SerializeField] private UnityEvent _runStarted;
+    [SerializeField] private UnityEvent _idleStarted;
     [SerializeField] private float _moveSpeed = 10f;
     [SerializeField] private float _jumpForce = 5f;
 
@@ -29,6 +31,7 @@ public class PlayerMover : MonoBehaviour
         { 
             IsOnGround = true;
             IsJumping = false;
+            _idleStarted.Invoke();
         }
     }
 
@@ -44,7 +47,14 @@ public class PlayerMover : MonoBehaviour
 
         if(horizontalInput != 0)
         {
+            if(IsOnGround == true)
+                _runStarted?.Invoke();
+
             transform.localScale = new Vector3(horizontalInput, transform.localScale.y, transform.localScale.z);
+        }
+        else
+        {
+            _idleStarted?.Invoke();
         }
         
         _rigidbody2D.velocity = new Vector2(horizontalInput * _moveSpeed, _rigidbody2D.velocity.y);

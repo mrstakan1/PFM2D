@@ -14,7 +14,7 @@ public class FighterTrigger : MonoBehaviour
         if (_fighter.CanAttack == true)
         {
             enemy.TakeDamage(_fighter.Damage);
-            _fighter.Cooldown();
+            _fighter.StartCooldown();
         }
         else
         {

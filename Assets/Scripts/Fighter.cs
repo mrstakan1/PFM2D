@@ -6,9 +6,13 @@ using UnityEngine.SceneManagement;
 
 public class Fighter : MonoBehaviour
 {
+    const string PlayerTag = "Player";
+
     [SerializeField] private UnityEvent _hitted;
     [SerializeField] private float _damage;
-    [SerializeField] private float _healthPoints = 10;
+    [SerializeField] private float _maxHealthPoints = 25;
+
+    private float _healthPoints;
 
     public float Damage => _damage;
     public bool CanAttack { get; private set; } = true;
@@ -18,12 +22,16 @@ public class Fighter : MonoBehaviour
 
     private void Awake()
     {
+        _healthPoints = _maxHealthPoints;
         _cooldown = new WaitForSeconds(_cooldownTime);
     }
 
     public void AddHealth(float health)
     {
         _healthPoints += health;
+
+        if (_healthPoints > _maxHealthPoints)
+            _healthPoints = _maxHealthPoints;
     }
 
     public void TakeDamage(float damage)
@@ -33,7 +41,7 @@ public class Fighter : MonoBehaviour
 
         if (_healthPoints <= 0)
         {
-            if(gameObject.name == "Player")
+            if(gameObject.name == PlayerTag)
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
                 Debug.Log("You died! Level restarted.");
@@ -46,7 +54,7 @@ public class Fighter : MonoBehaviour
         }
     }
 
-    public void Cooldown()
+    public void StartCooldown()
     {
         StartCoroutine(AttackCooldown());
     }
